@@ -28,12 +28,23 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeesModule } from './employees/employees.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { AuthModule } from './auth/auth.module';
+import { BookModule } from './book/book.module';
 import strict from 'assert/strict';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'path';
 
 @Module({
   imports: [EmployeeModule, CategoryModule, StudentModule, CustomerModule, ConfigModule.forRoot({
     isGlobal: true,
   }),
+GraphQLModule.forRoot<ApolloDriverConfig>({
+  driver:ApolloDriver,
+  autoSchemaFile: join(process.cwd(),'src/schema.gql'),
+
+  sortSchema: true,
+  playground: true,
+}),  
 MongooseModule.forRoot(process.env.MONGO_URL!),
 SupabaseModule,
 UserModule,
@@ -49,6 +60,7 @@ TypeOrmModule.forRoot({
 }),
 EmployeesModule,
 AuthModule,
+BookModule,
 ],
   controllers: [AppController, MynameController, UserRolesController, ExceptionController, DatabaseController, EvController],
   providers: [AppService, DatabaseService, EvService, 
